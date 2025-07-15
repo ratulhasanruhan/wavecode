@@ -6,6 +6,8 @@ import '../controllers/audio_controller.dart';
 import '../controllers/image_controller.dart';
 import '../widgets/image_display.dart';
 import '../widgets/waveform_painter.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class EncodeView extends StatelessWidget {
   EncodeView({super.key});
@@ -44,6 +46,22 @@ class EncodeView extends StatelessWidget {
             padding: EdgeInsets.all(24),
             child: Column(
               children: [
+                // Active File Info
+                Obx(
+                  () => imageController.generatedImagePath.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            'Current image: ${imageController.generatedImagePath.value}',
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 // Waveform Display
                 Container(
                   height: 200,
@@ -316,21 +334,62 @@ class EncodeView extends StatelessWidget {
   }
 
   Future<void> _saveImage() async {
-    Get.snackbar(
-      'Saved',
-      'Image saved to gallery',
-      backgroundColor: Colors.green.withValues(alpha: 0.8),
-      colorText: Colors.white,
-    );
+    try {
+      final path = imageController.generatedImagePath.value;
+      if (path.isEmpty) {
+        Get.snackbar('Error', 'No image to save');
+        return;
+      }
+      final file = File(path);
+      if (!await file.exists()) {
+        Get.snackbar('Error', 'Image file does not exist');
+        return;
+      }
+      // Use FilePicker to choose save location
+      final result = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save Image As',
+        fileName: 'wavecode_encoded.png',
+        type: FileType.custom,
+        allowedExtensions: ['png'],
+      );
+      if (result == null) {
+        // User canceled
+        return;
+      }
+      await file.copy(result);
+      Get.snackbar(
+        'Saved',
+        'Image saved to $result',
+        backgroundColor: Colors.green.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to save image: $e',
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+    }
   }
 
   Future<void> _shareImage() async {
     try {
+      final path = imageController.generatedImagePath.value;
+      if (path.isEmpty) {
+        Get.snackbar('Error', 'No image to share');
+        return;
+      }
+      final file = File(path);
+      if (!await file.exists()) {
+        Get.snackbar('Error', 'Image file does not exist');
+        return;
+      }
       await SharePlus.instance.share(
         ShareParams(
           text: 'Check out this generated image from WaveCode!',
           title: 'WaveCode Image',
-          files: [XFile(imageController.generatedImagePath.value)],
+          files: [XFile(path)],
         ),
       );
     } catch (e) {

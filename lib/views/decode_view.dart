@@ -7,6 +7,7 @@ import '../controllers/app_controller.dart';
 import '../controllers/audio_controller.dart';
 import '../controllers/image_controller.dart';
 import '../widgets/waveform_painter.dart';
+import 'package:file_picker/file_picker.dart';
 
 class DecodeView extends StatelessWidget {
   DecodeView({super.key});
@@ -45,6 +46,22 @@ class DecodeView extends StatelessWidget {
             padding: EdgeInsets.all(24),
             child: Column(
               children: [
+                // Active File Info
+                Obx(
+                  () => audioController.recordingPath.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            'Current audio: ${audioController.recordingPath.value}',
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 // Image Selection
                 Container(
                   height: 200,
@@ -199,14 +216,15 @@ class DecodeView extends StatelessWidget {
                     ),
                   ),
                   child: Obx(() {
-                    print('audioController.waveformData: ${audioController.waveformData}');
+                    print(
+                      'audioController.waveformData: ${audioController.waveformData}',
+                    );
                     return WaveformPainter(
                       waveformData: audioController.waveformData,
                       isRecording: false,
                       color: Colors.green,
                     );
-                  }
-                  ),
+                  }),
                 ).animate().fadeIn(delay: 600.ms, duration: 800.ms),
 
                 SizedBox(height: 32),
@@ -317,7 +335,7 @@ class DecodeView extends StatelessWidget {
       if (audioData != null) {
         // Load the decoded audio for playback
         await audioController.loadAudioWaveform(
-          '${Get.find<AppController>().audioPath}/decoded_${DateTime.now().millisecondsSinceEpoch}.wav',
+          '${Get.find<AppController>().audioPath}/decoded.wav',
         );
 
         Get.snackbar(
@@ -338,25 +356,64 @@ class DecodeView extends StatelessWidget {
   }
 
   Future<void> _saveAudio() async {
-    Get.snackbar(
-      'Saved',
-      'Audio saved to device',
-      backgroundColor: Colors.green.withValues(alpha: 0.8),
-      colorText: Colors.white,
-    );
+    try {
+      final path = audioController.recordingPath.value;
+      if (path.isEmpty) {
+        Get.snackbar('Error', 'No audio to save');
+        return;
+      }
+      final file = File(path);
+      if (!await file.exists()) {
+        Get.snackbar('Error', 'Audio file does not exist');
+        return;
+      }
+      // Use FilePicker to choose save location
+      final result = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save Audio As',
+        fileName: 'wavecode_decoded.wav',
+        type: FileType.custom,
+        allowedExtensions: ['wav'],
+      );
+      if (result == null) {
+        // User canceled
+        return;
+      }
+      await file.copy(result);
+      Get.snackbar(
+        'Saved',
+        'Audio saved to $result',
+        backgroundColor: Colors.green.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to save audio: $e',
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+    }
   }
 
   Future<void> _shareAudio() async {
     try {
-      if (audioController.recordingPath.value.isNotEmpty) {
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [XFile(audioController.recordingPath.value)],
-            text: 'Check out this audio file!',
-            subject: 'Audio from WaveCode',
-          ),
-        );
+      final path = audioController.recordingPath.value;
+      if (path.isEmpty) {
+        Get.snackbar('Error', 'No audio to share');
+        return;
       }
+      final file = File(path);
+      if (!await file.exists()) {
+        Get.snackbar('Error', 'Audio file does not exist');
+        return;
+      }
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(path)],
+          text: 'Check out this audio file!',
+          subject: 'Audio from WaveCode',
+        ),
+      );
     } catch (e) {
       Get.snackbar(
         'Error',

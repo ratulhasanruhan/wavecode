@@ -6,12 +6,17 @@ import 'dart:typed_data';
 import 'dart:math' as math;
 
 import 'app_controller.dart';
+import 'audio_controller.dart';
+import '../models/audio_image_model.dart';
 
 class ImageController extends GetxController {
   final RxString generatedImagePath = ''.obs;
   final RxString selectedImagePath = ''.obs;
   final RxBool isGenerating = false.obs;
   final RxBool isDecoding = false.obs;
+
+  // In-memory history
+  final RxList<AudioImageModel> history = <AudioImageModel>[].obs;
 
   Future<String?> encodeAudioToImage(Uint8List audioData) async {
     try {
@@ -37,15 +42,31 @@ class ImageController extends GetxController {
         }
       }
 
-      // Save image
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final imagePath =
-          '${Get.find<AppController>().imagesPath}/encoded_$timestamp.png';
+      // Save image with static name
+      final imagesDirPath = Get.find<AppController>().imagesPath;
+      final imagePath = '$imagesDirPath/encoded.png';
+      final imagesDir = Directory(imagesDirPath);
+      if (!await imagesDir.exists()) {
+        await imagesDir.create(recursive: true);
+      }
       final file = File(imagePath);
       await file.writeAsBytes(img.encodePng(image));
 
       generatedImagePath.value = imagePath;
       isGenerating.value = false;
+
+      // Add to history
+      history.add(
+        AudioImageModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          audioPath: '',
+          imagePath: imagePath,
+          createdAt: DateTime.now(),
+          name: 'Encoded Image',
+          duration: 0,
+          fileSize: audioData.length,
+        ),
+      );
 
       return imagePath;
     } catch (e) {
@@ -81,12 +102,31 @@ class ImageController extends GetxController {
       // Create WAV header
       final wavData = _createWavFile(Uint8List.fromList(audioData));
 
-      // Save decoded audio
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final audioPath =
-          '${Get.find<AppController>().audioPath}/decoded_$timestamp.wav';
+      // Save decoded audio with static name
+      final audioDirPath = Get.find<AppController>().audioPath;
+      final audioPath = '$audioDirPath/decoded.wav';
+      final audioDir = Directory(audioDirPath);
+      if (!await audioDir.exists()) {
+        await audioDir.create(recursive: true);
+      }
       final audioFile = File(audioPath);
       await audioFile.writeAsBytes(wavData);
+
+      // Set decoded audio path for UI access
+      Get.find<AudioController>().recordingPath.value = audioPath;
+
+      // Add to history
+      history.add(
+        AudioImageModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          audioPath: audioPath,
+          imagePath: imagePath,
+          createdAt: DateTime.now(),
+          name: 'Decoded Audio',
+          duration: 0,
+          fileSize: wavData.length,
+        ),
+      );
 
       isDecoding.value = false;
       return wavData;

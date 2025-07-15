@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../controllers/app_controller.dart';
+import '../controllers/image_controller.dart';
+import '../controllers/audio_controller.dart';
+import 'package:intl/intl.dart';
+import 'dart:io';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
 
   final AppController appController = Get.find<AppController>();
+  final ImageController imageController = Get.find<ImageController>();
+  final AudioController audioController = Get.find<AudioController>();
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +107,126 @@ class HomeView extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white60, fontSize: 16),
                 ).animate().fadeIn(delay: 600.ms, duration: 800.ms),
+
+                SizedBox(height: 32),
+                // Simple Gallery/History
+                Obx(
+                  () => imageController.history.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'History',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Container(
+                              height: 120,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: imageController.history.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      imageController.history[imageController
+                                              .history
+                                              .length -
+                                          1 -
+                                          index];
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      if (item.imagePath.isNotEmpty) {
+                                        Get.dialog(
+                                          Dialog(
+                                            child: Image.file(
+                                              File(item.imagePath),
+                                            ),
+                                          ),
+                                        );
+                                      } else if (item.audioPath.isNotEmpty) {
+                                        // Play or pause audio from history
+                                        if (audioController.isPlaying.value &&
+                                            audioController
+                                                    .recordingPath
+                                                    .value ==
+                                                item.audioPath) {
+                                          await audioController.stopPlaying();
+                                        } else {
+                                          await audioController.playAudio(
+                                            item.audioPath,
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 100,
+                                      margin: EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.05),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.white24,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          if (item.imagePath.isNotEmpty)
+                                            Icon(
+                                              Icons.image,
+                                              color: Colors.white,
+                                              size: 32,
+                                            )
+                                          else ...[
+                                            Obx(
+                                              () => Icon(
+                                                (audioController
+                                                            .isPlaying
+                                                            .value &&
+                                                        audioController
+                                                                .recordingPath
+                                                                .value ==
+                                                            item.audioPath)
+                                                    ? Icons.pause_circle_filled
+                                                    : Icons.play_circle_filled,
+                                                color: Colors.white,
+                                                size: 32,
+                                              ),
+                                            ),
+                                          ],
+                                          SizedBox(height: 8),
+                                          Text(
+                                            item.name,
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            DateFormat(
+                                              'MM/dd HH:mm',
+                                            ).format(item.createdAt),
+                                            style: TextStyle(
+                                              color: Colors.white38,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                ),
               ],
             ),
           ),

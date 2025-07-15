@@ -44,8 +44,12 @@ class AudioController extends GetxController {
     if (!isRecorderInitialized.value) return;
 
     try {
-      final path =
-          '${Get.find<AppController>().audioPath}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+      final audioDirPath = Get.find<AppController>().audioPath;
+      final audioDir = Directory(audioDirPath);
+      if (!await audioDir.exists()) {
+        await audioDir.create(recursive: true);
+      }
+      final path = '$audioDirPath/recording.wav';
 
       await _recorder.startRecorder(toFile: path, codec: Codec.pcm16WAV);
 
@@ -64,6 +68,10 @@ class AudioController extends GetxController {
     try {
       await _recorder.stopRecorder();
       isRecording.value = false;
+      // After recording, load waveform from the recorded file
+      if (recordingPath.value.isNotEmpty) {
+        await loadAudioWaveform(recordingPath.value);
+      }
     } catch (e) {
       Get.snackbar('Error', 'Failed to stop recording: $e');
     }
@@ -117,18 +125,8 @@ class AudioController extends GetxController {
   }
 
   void _generateWaveformData() {
-    // Simulate real-time waveform generation
-    final timer = Stream.periodic(Duration(milliseconds: 100), (i) {
-      if (isRecording.value) {
-        final amplitude = math.Random().nextDouble() * 2 - 1;
-        waveformData.add(amplitude);
-        if (waveformData.length > 100) {
-          waveformData.removeAt(0);
-        }
-      }
-    });
-
-    timer.listen((_) {});
+    // Remove random waveform generation
+    // Instead, waveform will be updated after recording or when loading audio
   }
 
   Future<void> loadAudioWaveform(String path) async {
@@ -136,10 +134,15 @@ class AudioController extends GetxController {
       final audioData = await getAudioData(path);
       waveformData.clear();
 
-      // Simple waveform extraction (you can enhance this)
-      for (int i = 0; i < audioData.length; i += 1000) {
-        if (i < audioData.length) {
-          double amplitude = (audioData[i] / 128.0) - 1.0;
+      // Improved waveform extraction: use PCM amplitude
+      // For 16-bit PCM WAV, every 2 bytes is a sample
+      for (int i = 44; i < audioData.length; i += 200) {
+        // skip WAV header, sample every 200 bytes
+        if (i + 1 < audioData.length) {
+          int sample = audioData[i] | (audioData[i + 1] << 8);
+          // Convert to signed 16-bit
+          if (sample & 0x8000 != 0) sample = sample - 0x10000;
+          double amplitude = sample / 32768.0;
           waveformData.add(amplitude);
         }
       }
