@@ -1,16 +1,30 @@
-# wavecode
+# WaveCode 🌊
 
-A new Flutter project.
+A beautiful Flutter app that encodes audio into stunning visual representations and decodes them back to audio.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- 🎙️ **Audio Recording**: Record audio directly from your device's microphone
+- 📁 **File Import**: Import WAV and MP3 files from your device
+- 🖼️ **Audio to Image**: Convert audio data into beautiful RGB image representations
+- 🎵 **Image to Audio**: Decode images back into playable audio files
+- 🎨 **Beautiful UI**: Modern design with glassmorphism effects and smooth animations
+- 💾 **Save & Share**: Save generated images and decoded audio files
+- 📱 **Cross-platform**: Works on both Android and iOS
 
-A few resources to get you started if this is your first Flutter project:
+## Technical Details
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Audio Processing
+- Uses FFT (Fast Fourier Transform) for frequency analysis
+- Converts audio amplitude data to RGB color values
+- Supports WAV and MP3 file formats
+- Real-time waveform visualization
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Image Generation
+- Maps audio data to RGB pixel values
+- Creates square images for optimal data storage
+- PNG format for lossless compression
+- Reversible encoding/decoding process
+
+
+The app includes a sophisticated audio-to-image encoding algorithm that converts audio data into RGB values and vice versa, creating stunning visual representations of your audio files.
