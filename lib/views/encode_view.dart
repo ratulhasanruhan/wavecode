@@ -51,12 +51,16 @@ class EncodeView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.green.withValues(alpha: 0.3),
+                    ),
                   ),
-                  child: Obx(() => WaveformPainter(
-                    waveformData: audioController.waveformData,
-                    isRecording: audioController.isRecording.value,
-                  )),
+                  child: Obx(
+                    () => WaveformPainter(
+                      waveformData: audioController.waveformData,
+                      isRecording: audioController.isRecording.value,
+                    ),
+                  ),
                 ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2),
 
                 SizedBox(height: 32),
@@ -66,17 +70,22 @@ class EncodeView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     // Record Button
-                    Obx(() => _buildControlButton(
-                      icon: audioController.isRecording.value
-                          ? Icons.stop : Icons.mic,
-                      label: audioController.isRecording.value
-                          ? 'Stop' : 'Record',
-                      color: audioController.isRecording.value
-                          ? Colors.red : Colors.green,
-                      onTap: audioController.isRecording.value
-                          ? audioController.stopRecording
-                          : audioController.startRecording,
-                    )),
+                    Obx(
+                      () => _buildControlButton(
+                        icon: audioController.isRecording.value
+                            ? Icons.stop
+                            : Icons.mic,
+                        label: audioController.isRecording.value
+                            ? 'Stop'
+                            : 'Record',
+                        color: audioController.isRecording.value
+                            ? Colors.red
+                            : Colors.green,
+                        onTap: audioController.isRecording.value
+                            ? audioController.stopRecording
+                            : audioController.startRecording,
+                      ),
+                    ),
 
                     // Upload Button
                     _buildControlButton(
@@ -87,113 +96,133 @@ class EncodeView extends StatelessWidget {
                     ),
 
                     // Play Button
-                    Obx(() => _buildControlButton(
-                      icon: audioController.isPlaying.value
-                          ? Icons.pause : Icons.play_arrow,
-                      label: audioController.isPlaying.value
-                          ? 'Pause' : 'Play',
-                      color: Colors.purple,
-                      onTap: audioController.isPlaying.value
-                          ? audioController.stopPlaying
-                          : () => audioController.playAudio(
-                          audioController.recordingPath.value),
-                    )),
+                    Obx(
+                      () => _buildControlButton(
+                        icon: audioController.isPlaying.value
+                            ? Icons.pause
+                            : Icons.play_arrow,
+                        label: audioController.isPlaying.value
+                            ? 'Pause'
+                            : 'Play',
+                        color: Colors.purple,
+                        onTap: audioController.isPlaying.value
+                            ? audioController.stopPlaying
+                            : () => audioController.playAudio(
+                                audioController.recordingPath.value,
+                              ),
+                      ),
+                    ),
                   ],
                 ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
 
                 SizedBox(height: 32),
 
                 // Generate Image Button
-                Obx(() => SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: audioController.recordingPath.value.isNotEmpty
-                        ? _generateImage : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.orange.shade400, Colors.red.shade400],
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: audioController.recordingPath.value.isNotEmpty
+                          ? _generateImage
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Center(
-                        child: imageController.isGenerating.value
-                            ? CircularProgressIndicator(color: Colors.white)
-                            : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.image, color: Colors.white),
-                            SizedBox(width: 12),
-                            Text(
-                              'Generate Image',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.orange.shade400,
+                              Colors.red.shade400,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Center(
+                          child: imageController.isGenerating.value
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.image, color: Colors.white),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      'Generate Image',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
                   ),
-                )),
+                ),
 
                 SizedBox(height: 32),
 
                 // Generated Image Display
                 Expanded(
-                  child: Obx(() => imageController.generatedImagePath.value.isNotEmpty
-                      ? Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ImageDisplay(
-                            imagePath: imageController.generatedImagePath.value,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildActionButton(
-                                icon: Icons.save,
-                                label: 'Save',
-                                onTap: () => _saveImage(),
+                  child: Obx(
+                    () => imageController.generatedImagePath.value.isNotEmpty
+                        ? Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.orange.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ImageDisplay(
+                                        imagePath: imageController
+                                            .generatedImagePath
+                                            .value,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          _buildActionButton(
+                                            icon: Icons.save,
+                                            label: 'Save',
+                                            onTap: () => _saveImage(),
+                                          ),
+                                          _buildActionButton(
+                                            icon: Icons.share,
+                                            label: 'Share',
+                                            onTap: () => _shareImage(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .animate()
+                              .fadeIn(duration: 800.ms)
+                              .scale(begin: Offset(0.8, 0.8))
+                        : Center(
+                            child: Text(
+                              'Generated image will appear here',
+                              style: TextStyle(
+                                color: Colors.white60,
+                                fontSize: 16,
                               ),
-                              _buildActionButton(
-                                icon: Icons.share,
-                                label: 'Share',
-                                onTap: () => _shareImage(),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ).animate().fadeIn(duration: 800.ms).scale(begin: Offset(0.8, 0.8))
-                      : Center(
-                    child: Text(
-                      'Generated image will appear here',
-                      style: TextStyle(
-                        color: Colors.white60,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
                   ),
                 ),
               ],
@@ -301,10 +330,8 @@ class EncodeView extends StatelessWidget {
         ShareParams(
           text: 'Check out this generated image from WaveCode!',
           title: 'WaveCode Image',
-          files: [
-            XFile(imageController.generatedImagePath.value),
-          ]
-        )
+          files: [XFile(imageController.generatedImagePath.value)],
+        ),
       );
     } catch (e) {
       Get.snackbar(

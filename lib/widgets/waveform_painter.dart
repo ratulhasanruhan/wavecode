@@ -105,10 +105,7 @@ class WaveformCustomPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          color.withValues(alpha: 0.6),
-          color.withValues(alpha: 0.1),
-        ],
+        colors: [color.withValues(alpha: 0.6), color.withValues(alpha: 0.1)],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final centerY = size.height / 2;
@@ -157,11 +154,7 @@ class WaveformCustomPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Draw center line
-    canvas.drawLine(
-      Offset(0, centerY),
-      Offset(size.width, centerY),
-      paint,
-    );
+    canvas.drawLine(Offset(0, centerY), Offset(size.width, centerY), paint);
 
     // Draw placeholder waveform
     for (int i = 0; i < 50; i++) {
@@ -175,14 +168,12 @@ class WaveformCustomPainter extends CustomPainter {
 
   void _drawRecordingIndicator(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red.withValues(alpha: 0.8 + 0.2 * math.sin(animationValue * math.pi * 2))
+      ..color = Colors.red.withValues(
+        alpha: 0.8 + 0.2 * math.sin(animationValue * math.pi * 2),
+      )
       ..style = PaintingStyle.fill;
 
-    canvas.drawCircle(
-      Offset(size.width - 30, 30),
-      8,
-      paint,
-    );
+    canvas.drawCircle(Offset(size.width - 30, 30), 8, paint);
   }
 
   @override

@@ -39,7 +39,8 @@ class ImageController extends GetxController {
 
       // Save image
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final imagePath = '${Get.find<AppController>().imagesPath}/encoded_$timestamp.png';
+      final imagePath =
+          '${Get.find<AppController>().imagesPath}/encoded_$timestamp.png';
       final file = File(imagePath);
       await file.writeAsBytes(img.encodePng(image));
 
@@ -82,7 +83,8 @@ class ImageController extends GetxController {
 
       // Save decoded audio
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final audioPath = '${Get.find<AppController>().audioPath}/decoded_$timestamp.wav';
+      final audioPath =
+          '${Get.find<AppController>().audioPath}/decoded_$timestamp.wav';
       final audioFile = File(audioPath);
       await audioFile.writeAsBytes(wavData);
 
@@ -147,9 +149,6 @@ class ImageController extends GetxController {
   }
 
   List<int> _int16ToBytes(int value) {
-    return [
-      value & 0xFF,
-      (value >> 8) & 0xFF,
-    ];
+    return [value & 0xFF, (value >> 8) & 0xFF];
   }
 }

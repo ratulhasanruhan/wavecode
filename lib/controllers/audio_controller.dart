@@ -44,12 +44,10 @@ class AudioController extends GetxController {
     if (!isRecorderInitialized.value) return;
 
     try {
-      final path = '${Get.find<AppController>().audioPath}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+      final path =
+          '${Get.find<AppController>().audioPath}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 
-      await _recorder.startRecorder(
-        toFile: path,
-        codec: Codec.pcm16WAV,
-      );
+      await _recorder.startRecorder(toFile: path, codec: Codec.pcm16WAV);
 
       isRecording.value = true;
       recordingPath.value = path;

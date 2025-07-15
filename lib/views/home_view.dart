@@ -16,11 +16,7 @@ class HomeView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1A1A2E),
-              Color(0xFF16213E),
-              Color(0xFF0F3460),
-            ],
+            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
           ),
         ),
         child: SafeArea(
@@ -47,11 +43,7 @@ class HomeView extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.waves,
-                        size: 80,
-                        color: Colors.white,
-                      ),
+                      Icon(Icons.waves, size: 80, color: Colors.white),
                       SizedBox(height: 16),
                       Text(
                         'WaveCode',
@@ -63,10 +55,7 @@ class HomeView extends StatelessWidget {
                       ),
                       Text(
                         'Audio ↔ Image Converter',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.white70),
                       ),
                     ],
                   ),
@@ -76,27 +65,33 @@ class HomeView extends StatelessWidget {
 
                 // Encode Button
                 _buildActionButton(
-                  icon: Icons.mic,
-                  title: 'Encode Sound',
-                  subtitle: 'Convert audio to image',
-                  gradient: LinearGradient(
-                    colors: [Colors.green.shade400, Colors.teal.shade400],
-                  ),
-                  onTap: () => Get.toNamed('/encode'),
-                ).animate().fadeIn(delay: 200.ms, duration: 600.ms).slideX(begin: -0.3),
+                      icon: Icons.mic,
+                      title: 'Encode Sound',
+                      subtitle: 'Convert audio to image',
+                      gradient: LinearGradient(
+                        colors: [Colors.green.shade400, Colors.teal.shade400],
+                      ),
+                      onTap: () => Get.toNamed('/encode'),
+                    )
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 600.ms)
+                    .slideX(begin: -0.3),
 
                 SizedBox(height: 24),
 
                 // Decode Button
                 _buildActionButton(
-                  icon: Icons.image,
-                  title: 'Decode Image',
-                  subtitle: 'Convert image to audio',
-                  gradient: LinearGradient(
-                    colors: [Colors.orange.shade400, Colors.red.shade400],
-                  ),
-                  onTap: () => Get.toNamed('/decode'),
-                ).animate().fadeIn(delay: 400.ms, duration: 600.ms).slideX(begin: 0.3),
+                      icon: Icons.image,
+                      title: 'Decode Image',
+                      subtitle: 'Convert image to audio',
+                      gradient: LinearGradient(
+                        colors: [Colors.orange.shade400, Colors.red.shade400],
+                      ),
+                      onTap: () => Get.toNamed('/decode'),
+                    )
+                    .animate()
+                    .fadeIn(delay: 400.ms, duration: 600.ms)
+                    .slideX(begin: 0.3),
 
                 SizedBox(height: 60),
 
@@ -104,10 +99,7 @@ class HomeView extends StatelessWidget {
                 Text(
                   'Transform your audio into stunning visual representations',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white60,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.white60, fontSize: 16),
                 ).animate().fadeIn(delay: 600.ms, duration: 800.ms),
               ],
             ),
@@ -157,11 +149,7 @@ class HomeView extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: Colors.white,
-                ),
+                child: Icon(icon, size: 32, color: Colors.white),
               ),
               Expanded(
                 child: Column(
@@ -179,19 +167,12 @@ class HomeView extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
-                size: 20,
-              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
               SizedBox(width: 20),
             ],
           ),

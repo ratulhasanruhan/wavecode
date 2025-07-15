@@ -55,18 +55,11 @@ class ImageDisplay extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 48,
-                        ),
+                        Icon(Icons.error_outline, color: Colors.red, size: 48),
                         SizedBox(height: 16),
                         Text(
                           'Failed to load image',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
                         ),
                       ],
                     ),
@@ -99,11 +92,7 @@ class ImageDisplay extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.waves,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: Icon(Icons.waves, color: Colors.white, size: 20),
               ),
             ),
           ],
