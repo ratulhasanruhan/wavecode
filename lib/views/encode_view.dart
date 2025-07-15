@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:io';
 import '../controllers/audio_controller.dart';
 import '../controllers/image_controller.dart';
 import '../widgets/image_display.dart';

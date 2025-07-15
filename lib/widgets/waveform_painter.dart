@@ -97,7 +97,7 @@ class WaveformCustomPainter extends CustomPainter {
     }
 
     final paint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
@@ -106,8 +106,8 @@ class WaveformCustomPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          color.withOpacity(0.6),
-          color.withOpacity(0.1),
+          color.withValues(alpha: 0.6),
+          color.withValues(alpha: 0.1),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -151,7 +151,7 @@ class WaveformCustomPainter extends CustomPainter {
 
   void _drawPlaceholder(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
+      ..color = Colors.white.withValues(alpha: 0.2)
       ..strokeWidth = 1.0;
 
     final centerY = size.height / 2;
@@ -175,7 +175,7 @@ class WaveformCustomPainter extends CustomPainter {
 
   void _drawRecordingIndicator(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.red.withOpacity(0.8 + 0.2 * math.sin(animationValue * math.pi * 2))
+      ..color = Colors.red.withValues(alpha: 0.8 + 0.2 * math.sin(animationValue * math.pi * 2))
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(

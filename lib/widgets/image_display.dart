@@ -9,16 +9,16 @@ class ImageDisplay extends StatelessWidget {
   final BoxFit fit;
 
   const ImageDisplay({
-    Key? key,
+    super.key,
     required this.imagePath,
     this.width,
     this.height,
     this.fit = BoxFit.contain,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: ClipRRect(
@@ -32,8 +32,8 @@ class ImageDisplay extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.blue.withOpacity(0.1),
-                    Colors.purple.withOpacity(0.1),
+                    Colors.blue.withValues(alpha: 0.1),
+                    Colors.purple.withValues(alpha: 0.1),
                   ],
                 ),
               ),
@@ -83,7 +83,7 @@ class ImageDisplay extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.1),
+                    Colors.black.withValues(alpha: 0.1),
                   ],
                 ),
               ),
@@ -96,7 +96,7 @@ class ImageDisplay extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(

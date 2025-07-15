@@ -7,7 +7,6 @@ import '../controllers/app_controller.dart';
 import '../controllers/audio_controller.dart';
 import '../controllers/image_controller.dart';
 import '../widgets/waveform_painter.dart';
-import '../widgets/image_display.dart';
 
 class DecodeView extends StatelessWidget {
   DecodeView({super.key});
@@ -36,7 +35,7 @@ class DecodeView extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.orange.shade400.withOpacity(0.1),
+              Colors.orange.shade400.withValues(alpha: 0.1),
               Colors.black,
             ],
           ),
@@ -51,9 +50,9 @@ class DecodeView extends StatelessWidget {
                   height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                   ),
                   child: Obx(() => imageController.selectedImagePath.value.isNotEmpty
                       ? ClipRRect(
@@ -89,7 +88,7 @@ class DecodeView extends StatelessWidget {
                 SizedBox(height: 32),
 
                 // Select Image Button
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
@@ -131,7 +130,7 @@ class DecodeView extends StatelessWidget {
                 SizedBox(height: 32),
 
                 // Decode Button
-                Obx(() => Container(
+                Obx(() => SizedBox(
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
@@ -180,9 +179,9 @@ class DecodeView extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.green.withOpacity(0.3)),
+                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                   ),
                   child: Obx(() => WaveformPainter(
                     waveformData: audioController.waveformData,
@@ -258,12 +257,12 @@ class DecodeView extends StatelessWidget {
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [color.withOpacity(0.8), color],
+            colors: [color.withValues(alpha: 0.8), color],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: Offset(0, 5),
             ),
@@ -303,7 +302,7 @@ class DecodeView extends StatelessWidget {
         Get.snackbar(
           'Success',
           'Audio decoded successfully!',
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -311,7 +310,7 @@ class DecodeView extends StatelessWidget {
       Get.snackbar(
         'Error',
         'Failed to decode image: $e',
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -321,7 +320,7 @@ class DecodeView extends StatelessWidget {
     Get.snackbar(
       'Saved',
       'Audio saved to device',
-      backgroundColor: Colors.green.withOpacity(0.8),
+      backgroundColor: Colors.green.withValues(alpha: 0.8),
       colorText: Colors.white,
     );
   }
@@ -329,15 +328,21 @@ class DecodeView extends StatelessWidget {
   Future<void> _shareAudio() async {
     try {
       if (audioController.recordingPath.value.isNotEmpty) {
-        await Share.shareXFiles([
-          XFile(audioController.recordingPath.value),
-        ]);
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [
+              XFile(audioController.recordingPath.value),
+            ],
+            text: 'Check out this audio file!',
+            subject: 'Audio from WaveCode',
+          )
+        );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
         'Failed to share audio: $e',
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
