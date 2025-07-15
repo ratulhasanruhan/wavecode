@@ -1,5 +1,7 @@
 # WaveCode 🌊
 
+<img width="1024" height="1024" alt="logo" src="https://github.com/user-attachments/assets/172c0ae7-df5a-4405-a980-899e03dc518c" />
+
 A beautiful Flutter app that encodes audio into stunning visual representations and decodes them back to audio.
 
 ## Features
