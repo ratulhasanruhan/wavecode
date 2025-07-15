@@ -101,7 +101,6 @@ class ImageController extends GetxController {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
-        allowedExtensions: ['png', 'jpg', 'jpeg'],
       );
 
       if (result != null && result.files.single.path != null) {

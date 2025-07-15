@@ -198,12 +198,14 @@ class DecodeView extends StatelessWidget {
                       color: Colors.green.withValues(alpha: 0.3),
                     ),
                   ),
-                  child: Obx(
-                    () => WaveformPainter(
+                  child: Obx(() {
+                    print('audioController.waveformData: ${audioController.waveformData}');
+                    return WaveformPainter(
                       waveformData: audioController.waveformData,
                       isRecording: false,
                       color: Colors.green,
-                    ),
+                    );
+                  }
                   ),
                 ).animate().fadeIn(delay: 600.ms, duration: 800.ms),
 

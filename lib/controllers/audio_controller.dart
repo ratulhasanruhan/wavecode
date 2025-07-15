@@ -73,7 +73,6 @@ class AudioController extends GetxController {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.audio,
-        allowedExtensions: ['wav', 'mp3'],
       );
 
       if (result != null && result.files.single.path != null) {
