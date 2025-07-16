@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -21,6 +22,8 @@ class AudioController extends GetxController {
   final RxString recordingPath = ''.obs;
   final RxList<double> waveformData = <double>[].obs;
   final RxDouble recordingDuration = 0.0.obs;
+
+  StreamSubscription? _waveformSimSubscription;
 
   @override
   void onInit() {
@@ -51,14 +54,14 @@ class AudioController extends GetxController {
       }
       final path = '$audioDirPath/recording.wav';
 
-      await _recorder.startRecorder(toFile: path, codec: Codec.pcm16WAV);
-
+      waveformData.clear();
       isRecording.value = true;
       recordingPath.value = path;
-      waveformData.clear();
 
-      // Simulate waveform data generation
-      _generateWaveformData();
+      await _recorder.startRecorder(toFile: path, codec: Codec.pcm16WAV);
+
+      // Start simulated waveform
+      _waveformSimSubscription = _generateWaveformData();
     } catch (e) {
       Get.snackbar('Error', 'Failed to start recording: $e');
     }
@@ -68,6 +71,8 @@ class AudioController extends GetxController {
     try {
       await _recorder.stopRecorder();
       isRecording.value = false;
+      await _waveformSimSubscription?.cancel();
+      _waveformSimSubscription = null;
       // After recording, load waveform from the recorded file
       if (recordingPath.value.isNotEmpty) {
         await loadAudioWaveform(recordingPath.value);
@@ -124,9 +129,17 @@ class AudioController extends GetxController {
     return await file.readAsBytes();
   }
 
-  void _generateWaveformData() {
-    // Remove random waveform generation
-    // Instead, waveform will be updated after recording or when loading audio
+  // Returns a StreamSubscription so it can be cancelled
+  StreamSubscription _generateWaveformData() {
+    return Stream.periodic(Duration(milliseconds: 100), (i) {
+      if (isRecording.value) {
+        final amplitude = math.Random().nextDouble() * 2 - 1;
+        waveformData.add(amplitude);
+        if (waveformData.length > 100) {
+          waveformData.removeAt(0);
+        }
+      }
+    }).listen((_) {});
   }
 
   Future<void> loadAudioWaveform(String path) async {
@@ -155,6 +168,7 @@ class AudioController extends GetxController {
   void onClose() {
     _recorder.closeRecorder();
     _player.dispose();
+    _waveformSimSubscription?.cancel();
     super.onClose();
   }
 }
